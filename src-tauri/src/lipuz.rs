@@ -165,6 +165,27 @@ pub fn filter_lines<R: BufRead>(mut rd: R, f: &Filter, mut stop: impl FnMut() ->
     Ok(out)
 }
 
+// O arquivo do Lichess começa com um "skippable frame" (metadado, magic 0x184D2A5?) que o ruzstd não pula sozinho: pula aqui.
+#[cfg(any(windows, test))]
+fn skip_skippable<F: std::io::Read + std::io::Seek>(fh: &mut F) -> std::io::Result<()> {
+    use std::io::SeekFrom;
+    loop {
+        let pos = fh.stream_position()?;
+        let mut h = [0u8; 8];
+        if fh.read_exact(&mut h).is_err() {
+            fh.seek(SeekFrom::Start(pos))?;
+            return Ok(());
+        }
+        let magic = u32::from_le_bytes([h[0], h[1], h[2], h[3]]);
+        if (0x184D_2A50..=0x184D_2A5F).contains(&magic) {
+            fh.seek(SeekFrom::Current(u32::from_le_bytes([h[4], h[5], h[6], h[7]]) as i64))?;
+        } else {
+            fh.seek(SeekFrom::Start(pos))?;
+            return Ok(());
+        }
+    }
+}
+
 #[tauri::command(async)]
 pub fn lp_query(app: AppHandle, themes: Vec<String>, all: bool, min: u32, max: u32, pop: i32, count: usize, random: bool, opening: String) -> Result<Vec<LpRow>, String> {
     CANCEL.store(false, Ordering::Relaxed);
@@ -185,8 +206,9 @@ pub fn lp_query(app: AppHandle, themes: Vec<String>, all: bool, min: u32, max: u
     // Windows: descompacta dentro do próprio app (não precisa instalar o zstd)
     #[cfg(windows)]
     let out = {
-        let fh = std::fs::File::open(&f).map_err(|e| e.to_string())?;
-        ruzstd::StreamingDecoder::new(fh).map_err(|e| format!("Arquivo de puzzles inválido: {e}"))?
+        let mut fh = std::fs::File::open(&f).map_err(|e| e.to_string())?;
+        skip_skippable(&mut fh).map_err(|e| e.to_string())?;
+        ruzstd::StreamingDecoder::new(BufReader::with_capacity(1 << 20, fh)).map_err(|e| format!("Arquivo de puzzles inválido: {e}"))?
     };
     let flt = Filter { themes, all, min, max, pop, count: count.clamp(1, 5000), random, opening };
     let res = filter_lines(BufReader::with_capacity(1 << 20, out), &flt, || CANCEL.load(Ordering::Relaxed));
