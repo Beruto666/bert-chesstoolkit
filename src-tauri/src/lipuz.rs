@@ -51,7 +51,7 @@ pub fn lp_download(app: AppHandle) -> Result<String, String> {
     }
     let tmp = f.with_extension("zst.tmp");
     let _ = std::fs::remove_file(&tmp);
-    let mut child = crate::sys::cmd("curl")
+    let mut child = crate::sys::curl()
         .args(["-fsL", "--retry", "2", "-A", "Bert-ChessToolkit", "-o"])
         .arg(&tmp)
         .arg(URL)

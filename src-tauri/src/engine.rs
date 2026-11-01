@@ -162,7 +162,7 @@ pub fn engine_install(app: AppHandle) -> Result<String, String> {
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
 
     say("Procurando a versão mais recente do Stockfish…");
-    let out = command("curl")
+    let out = crate::sys::curl()
         .args(["-sIL", "-o", NULL, "-w", "%{url_effective}", "https://github.com/official-stockfish/Stockfish/releases/latest"])
         .output()
         .map_err(|e| format!("Não encontrei o programa curl ({}). Instale com: sudo pacman -S curl", e))?;
@@ -172,7 +172,7 @@ pub fn engine_install(app: AppHandle) -> Result<String, String> {
         .next()
         .map(|t| t.trim().to_string())
         .filter(|t| !t.is_empty() && !t.contains('/'))
-        .unwrap_or_else(|| "sf_19".to_string());
+        .unwrap_or_default();
 
     #[cfg(windows)]
     let candidates = vec![
@@ -191,19 +191,33 @@ pub fn engine_install(app: AppHandle) -> Result<String, String> {
     ];
     let archive = dir.join("download.tmp");
     let mut got = false;
+    let mut last_err = String::new();
     for name in candidates {
-        let url = format!("https://github.com/official-stockfish/Stockfish/releases/download/{}/{}", tag, name);
-        say(&format!("Baixando {} ({})…", name, tag));
+        // sem a etiqueta da versão, o próprio GitHub redireciona "latest/download" para o arquivo mais recente
+        let url = if tag.is_empty() {
+            format!("https://github.com/official-stockfish/Stockfish/releases/latest/download/{}", name)
+        } else {
+            format!("https://github.com/official-stockfish/Stockfish/releases/download/{}/{}", tag, name)
+        };
+        say(&format!("Baixando {} {}…", name, tag));
         let _ = std::fs::remove_file(&archive);
-        let mut child = command("curl")
-            .args(["-fsL", "--retry", "2", "-o"])
+        let mut child = crate::sys::curl()
+            .args(["-fsSL", "--retry", "2", "-o"])
             .arg(&archive)
             .arg(&url)
+            .stderr(Stdio::piped())
             .spawn()
             .map_err(|e| format!("Não consegui executar o curl: {}", e))?;
         let ok = loop {
             match child.try_wait() {
-                Ok(Some(st)) => break st.success(),
+                Ok(Some(st)) => {
+                    if !st.success() {
+                        let mut s = String::new();
+                        if let Some(mut e) = child.stderr.take() { let _ = std::io::Read::read_to_string(&mut e, &mut s); }
+                        last_err = s.trim().to_string();
+                    }
+                    break st.success();
+                }
                 Ok(None) => {
                     let mb = std::fs::metadata(&archive).map(|m| m.len() / 1_048_576).unwrap_or(0);
                     say(&format!("Baixando {} ({}): {} MB…", name, tag, mb));
@@ -219,7 +233,9 @@ pub fn engine_install(app: AppHandle) -> Result<String, String> {
     }
     if !got {
         let _ = std::fs::remove_file(&archive);
-        return Err("Não consegui baixar o Stockfish. Verifique a internet ou instale pelo sistema (sudo pacman -S stockfish).".to_string());
+        let dica = if cfg!(windows) { "Verifique a internet ou escolha outro programa UCI." } else { "Verifique a internet ou instale pelo sistema (sudo pacman -S stockfish)." };
+        let det = if last_err.is_empty() { String::new() } else { format!(" Detalhe: {}", last_err) };
+        return Err(format!("Não consegui baixar o Stockfish. {}{}", dica, det));
     }
 
     say("Extraindo…");

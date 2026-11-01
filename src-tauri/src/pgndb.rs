@@ -750,7 +750,7 @@ pub fn db_report(id: String, player: String, exact: bool) -> Result<Report, Stri
 
 // ---------- partidas online (Lichess / Chess.com) viram uma database ----------
 fn curl_to_file(app: &AppHandle, id: &str, url: &str, accept: Option<&str>, out: &PathBuf, phase: &str) -> Result<(), String> {
-    let mut cmd = crate::sys::cmd("curl");
+    let mut cmd = crate::sys::curl();
     cmd.args(["-fsSL", "--retry", "2", "-A", "BertChessToolkit/1.0 (personal use)"]);
     if let Some(a) = accept { cmd.args(["-H", &format!("Accept: {}", a)]); }
     cmd.arg("-o").arg(out).arg(url);

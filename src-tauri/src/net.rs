@@ -24,7 +24,7 @@ pub fn http_get(url: String, token: Option<String>, accept: Option<String>, time
     let acc = if accept.as_deref() == Some("pgn") { "application/x-chess-pgn" } else { "application/json" };
     let secs = timeout.unwrap_or(15).clamp(5, 90).to_string();
     let tok = token.filter(|t| token_host(&url) && (8..=100).contains(&t.len()) && t.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-'));
-    let mut cmd = crate::sys::cmd("curl");
+    let mut cmd = crate::sys::curl();
     cmd.args(["-sL", "-m", &secs, "-A", "Bert-ChessToolkit", "-H", &format!("Accept: {}", acc), "-w", "\n%{http_code}"]);
     // o token vai por stdin (-K -), para não aparecer na lista de processos
     if tok.is_some() { cmd.args(["-K", "-"]).stdin(Stdio::piped()); } else { cmd.stdin(Stdio::null()); }
@@ -59,7 +59,7 @@ pub fn openings_load(app: tauri::AppHandle, download: bool) -> Result<Option<Str
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
     let mut all = String::new();
     for (i, f) in ["a", "b", "c", "d", "e"].iter().enumerate() {
-        let out = crate::sys::cmd("curl")
+        let out = crate::sys::curl()
             .args(["-sfL", "-m", "30", "-A", "Bert-ChessToolkit"])
             .arg(format!("https://raw.githubusercontent.com/lichess-org/chess-openings/master/{}.tsv", f))
             .output()

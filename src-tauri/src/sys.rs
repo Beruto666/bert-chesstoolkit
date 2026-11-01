@@ -15,6 +15,16 @@ pub fn cmd<S: AsRef<OsStr>>(prog: S) -> Command {
     c
 }
 
+// curl: no Windows o curl do sistema usa o Schannel, que falha quando não consegue checar certificados revogados
+// (antivírus, proxy, rede da empresa). Desligar só essa checagem evita o erro sem desligar a verificação do certificado.
+pub fn curl() -> Command {
+    #[allow(unused_mut)]
+    let mut c = cmd("curl");
+    #[cfg(windows)]
+    c.arg("--ssl-no-revoke");
+    c
+}
+
 // Pasta pessoal: $HOME (Linux) ou %USERPROFILE% (Windows).
 pub fn home() -> PathBuf {
     #[cfg(windows)]
