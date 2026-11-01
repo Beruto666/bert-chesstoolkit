@@ -176,6 +176,7 @@ pub fn engine_install(app: AppHandle) -> Result<String, String> {
 
     #[cfg(windows)]
     let candidates = vec![
+        "stockfish-windows-x86-64-universal.zip".to_string(),
         "stockfish-windows-x86-64-avx2.zip".to_string(),
         "stockfish-windows-x86-64-sse41-popcnt.zip".to_string(),
         "stockfish-windows-x86-64.zip".to_string(),
