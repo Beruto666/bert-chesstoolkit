@@ -66,6 +66,10 @@ export function fitBoard() {
   if (!s) return; // escondido: tenta de novo quando a tela abrir
   s = Math.max(MIN_SIZE, Math.min(MAX_SIZE, s, Math.max(MIN_SIZE, window.innerWidth - 36)));
   document.documentElement.style.setProperty("--s", s + "px");
+  if (!prefs.size) { // tamanho automático: se a página ainda ficou mais alta que a janela (ex.: barra de ferramentas quebrou em 2 linhas), encolhe o tabuleiro só o necessário
+    const ex = document.documentElement.scrollHeight - window.innerHeight;
+    if (ex > 1 && ex < 120 && s - ex >= MIN_SIZE) { s -= ex; document.documentElement.style.setProperty("--s", s + "px"); }
+  }
   $("bSize").value = s;
   $("szVal").textContent = prefs.size ? `${s}px` : `${s}px (auto)`;
   $("bAuto").checked = !prefs.size;

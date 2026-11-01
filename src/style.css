@@ -239,7 +239,7 @@ dialog:has(textarea){width:min(720px,94vw)}
 .evbar[data-lead=b]:not(.flip) .evl,.evbar[data-lead=w].flip .evl{top:4px}
 .evbar[data-lead=w] .evl{color:#222}.evbar[data-lead=b] .evl{color:#eee}
 .abright{width:min(100%,450px);height:calc(var(--s) + 116px);display:flex;flex-direction:column;gap:10px}
-.abright .abpanel{width:100%;height:auto;flex:1;min-height:440px}
+.abright .abpanel{width:100%;height:auto;flex:1;min-height:400px}
 .abeng{flex:none;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px 10px}
 .abeng .eh{display:flex;align-items:center;gap:10px}
 .evbig{font-size:22px;min-width:64px;font-variant-numeric:tabular-nums}
@@ -254,6 +254,7 @@ dialog:has(textarea){width:min(720px,94vw)}
 .swt input:checked+i{background:var(--ok)}
 .swt input:checked+i::after{transform:translateX(16px)}
 .elines{margin-top:6px;min-height:96px}
+.abeng:has(#abEngSw:not(:checked)) .elines{min-height:44px}
 .eln{display:flex;gap:8px;align-items:baseline;padding:3px 0;border-top:1px solid var(--bd);font-size:13.5px;line-height:1.5}
 .eln:first-child{border-top:0}
 .ech{flex:none;min-width:48px;text-align:center;border-radius:5px;padding:0 4px;font-size:13px;font-variant-numeric:tabular-nums}
