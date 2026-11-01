@@ -2,7 +2,7 @@
 
 **English** · [Português](README.pt-BR.md)
 
-A free, offline-first chess study app for Linux, built with [Tauri 2](https://tauri.app) (AppImage). Library, puzzles, analysis with Stockfish, huge PGN databases, opening repertoire training and endgame drills in a single lightweight app. No ads, no account required.
+A free, offline-first chess study app for Linux and Windows, built with [Tauri 2](https://tauri.app) (AppImage on Linux, installer on Windows). Library, puzzles, analysis with Stockfish, huge PGN databases, opening repertoire training and endgame drills in a single lightweight app. No ads, no account required.
 
 > Personal, non-commercial project. Made for studying and sharing with friends.
 
@@ -23,7 +23,9 @@ A detailed (Portuguese) feature list and changelog is in [docs/FEATURES.pt-BR.md
 
 ## Download / build
 
-Pre-built AppImages, when available, are on the [Releases](../../releases) page.
+Pre-built downloads are on the [Releases](../../releases) page: an **AppImage** for Linux and a **`-setup.exe` installer** for Windows 10/11.
+
+> **Windows warning:** the installer is not code-signed, so Windows SmartScreen may say "Windows protected your PC". Click **More info → Run anyway**. (If your browser blocks the download, open its download list and choose **Keep**.) The app is open source; you can build it yourself below.
 
 To build it yourself (Arch / CachyOS shown; on Debian/Ubuntu install the equivalent `libwebkit2gtk-4.1-dev`, `build-essential`, `libssl-dev`, `librsvg2-dev`, `libayatana-appindicator3-dev`, `patchelf`, `libxdo-dev`):
 
@@ -36,6 +38,9 @@ NO_STRIP=true APPIMAGE_EXTRACT_AND_RUN=1 npm run tauri build -- --bundles appima
 ```
 
 The AppImage is created in `src-tauri/target/release/bundle/appimage/`.
+
+### Windows (experimental)
+The Windows installer (NSIS) is built by the `Release (Windows)` GitHub Actions workflow, or locally with `npm run tauri build -- --bundles nsis` (needs Rust + Node + WebView2, which ships with Windows 10/11). It is newer than the Linux build and has had less testing: please report problems. On Windows the app uses the `curl.exe` and `tar.exe` that come with Windows 10/11, plays sounds natively (.wav) and needs no `zstd`.
 
 ### Runtime requirements
 - `curl` (downloads of Stockfish, Lichess/Chess.com games, puzzles and opening names).
@@ -62,7 +67,7 @@ docs/           extra documentation
 
 ## Platform support
 
-Linux only for now. A Windows port is possible (Tauri supports it) but needs work on audio, file browsing and engine download.
+Linux (main platform, AppImage) and Windows 10/11 (newer, less tested). macOS is not supported.
 
 ## License
 

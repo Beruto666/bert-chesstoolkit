@@ -2,7 +2,7 @@
 
 [English](README.md) · **Português**
 
-App de xadrez gratuito para Linux, feito com [Tauri 2](https://tauri.app) (AppImage), para estudar sem depender da internet: Biblioteca, Puzzles, Análise com Stockfish, databases enormes de PGN, treino de repertório e de finais, tudo num app leve. Sem anúncios e sem conta obrigatória.
+App de xadrez gratuito para Linux e Windows, feito com [Tauri 2](https://tauri.app) (AppImage no Linux, instalador no Windows), para estudar sem depender da internet: Biblioteca, Puzzles, Análise com Stockfish, databases enormes de PGN, treino de repertório e de finais, tudo num app leve. Sem anúncios e sem conta obrigatória.
 
 > Projeto pessoal e sem fins comerciais, feito para estudar e compartilhar com amigos.
 
@@ -23,7 +23,9 @@ Lista detalhada e histórico de versões: [docs/FEATURES.pt-BR.md](docs/FEATURES
 
 ## Baixar / compilar
 
-Os AppImages prontos, quando houver, ficam na página de [Releases](../../releases).
+Os downloads prontos ficam na página de [Releases](../../releases): um **AppImage** para Linux e um instalador **`-setup.exe`** para Windows 10/11.
+
+> **Aviso no Windows:** o instalador não é assinado digitalmente, então o SmartScreen pode dizer "O Windows protegeu o computador". Clique em **Mais informações → Executar assim mesmo**. (Se o navegador bloquear o download, abra a lista de downloads e escolha **Manter**.) O app é de código aberto; você pode compilar você mesmo, como abaixo.
 
 Para compilar (exemplo para Arch / CachyOS):
 
@@ -36,6 +38,9 @@ NO_STRIP=true APPIMAGE_EXTRACT_AND_RUN=1 npm run tauri build -- --bundles appima
 ```
 
 O AppImage sai em `src-tauri/target/release/bundle/appimage/`.
+
+### Windows
+O instalador é gerado pelo workflow `Release (Windows)` do GitHub Actions, ou localmente com `npm run tauri build -- --bundles nsis` (precisa de Rust, Node e WebView2, que já vem no Windows 10/11). É mais novo que a versão Linux e foi menos testado: avise se encontrar problemas. No Windows o app usa o `curl.exe` e o `tar.exe` que já vêm no sistema, toca os sons .wav nativamente e não precisa do `zstd`.
 
 ### Requisitos em tempo de execução
 - `curl` (downloads do Stockfish, partidas do Lichess/Chess.com, puzzles e nomes de aberturas).
