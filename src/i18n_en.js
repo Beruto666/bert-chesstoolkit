@@ -874,6 +874,7 @@ export default [
 ["Restaurar padrões", "Restore defaults"],
 ["Nome", "Name"],
 ["Capivara", "Capybara"],
+["Não consegui baixar o Stockfish. Verifique a internet ou escolha outro programa UCI.", "Could not download Stockfish. Check your internet or choose another UCI program."],
 ["Usar imagem do livro", "Use image from the book"],
 ["Nenhuma imagem encontrada", "No image found"],
 ];
