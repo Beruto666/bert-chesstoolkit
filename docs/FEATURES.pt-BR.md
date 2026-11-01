@@ -67,6 +67,11 @@ Código do app: MIT. Regras de xadrez: [chess.js](https://github.com/jhlywa/ches
 ## Novidades da v1.24.0
 - Biblioteca: PDFs e EPUBs ganham como capa, automaticamente, a primeira imagem do livro (EPUB: a capa; PDF: a primeira imagem grande). Livros sem imagem e PGNs continuam com a capa colorida de sempre. No editor há "Usar imagem do livro", "Escolher imagem" e "Remover capa" (que mantém a capa colorida e não é refeita).
 
+## Novidades da v1.25.0
+- **Windows:** instalador `.exe` nas Releases (pode aparecer o aviso do SmartScreen: *Mais informações → Executar assim mesmo*). Atalho **F11** para tela cheia (também no Linux).
+- O painel de lances da Análise e o tamanho automático do tabuleiro foram ajustados para janelas menores (telas com escala de 125% ou mais).
+- Windows: download do Stockfish e do banco de puzzles do Lichess corrigidos.
+
 ## Novidades da v1.23.0 (Windows, experimental)
 - Primeira versão preparada para Windows (instalador gerado pelo GitHub Actions). **Ainda não foi testada em um Windows de verdade**, então pode ter ajustes. No Linux nada mudou.
 - No Windows: usa o curl e o tar que já vêm no Windows 10/11, toca os sons .wav pelo próprio sistema, descompacta o banco de puzzles dentro do app (sem instalar o zstd) e o seletor de arquivos mostra os discos (C:, D:…).
