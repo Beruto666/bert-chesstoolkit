@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bert ChessToolKit</title>
+<script>/* tema do app antes da primeira pintura (evita o "piscar" da cor antiga) */try{var a=(JSON.parse(localStorage.getItem("prefs")||"{}")).app||"black";if(a!=="auto")document.documentElement.dataset.app=a}catch(e){document.documentElement.dataset.app="black"}</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<button class="ghost" id="gear" data-look title="Configurações" aria-label="Configurações"><svg class="i"><use href="#i-cog"/></svg></button>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-library" viewBox="0 0 24 24"><path d="M2 5.5C4.6 4.4 8.2 4.5 12 6.6c3.8-2.1 7.4-2.2 10-1.1V19c-2.6-1.1-6.2-1-10 1.1C8.2 18 4.6 17.9 2 19Z"/><path d="M12 6.6V20"/></symbol>
+<symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M19.4 7.85c-.05.32.06.65.29.88l1.57 1.57a2.4 2.4 0 0 1 0 3.4l-1.61 1.61a.98.98 0 0 1-.84.28c-.47-.07-.8-.48-.97-.93a2.5 2.5 0 1 0-3.21 3.21c.45.17.86.5.93.97a.98.98 0 0 1-.28.84l-1.61 1.61a2.4 2.4 0 0 1-3.4 0l-1.57-1.57a1.03 1.03 0 0 0-.88-.29c-.49.07-.84.5-1.02.97a2.5 2.5 0 1 1-3.24-3.24c.46-.18.89-.53.97-1.02a1.03 1.03 0 0 0-.29-.88l-1.57-1.57a2.4 2.4 0 0 1 0-3.4l1.53-1.53c.24-.24.58-.35.92-.3.52.08.88.53 1.07 1.01a2.5 2.5 0 1 0 3.26-3.26c-.48-.2-.93-.56-1.01-1.07-.05-.34.06-.68.3-.92l1.53-1.53a2.4 2.4 0 0 1 3.4 0l1.57 1.57c.23.23.56.34.88.29.49-.07.84-.5 1.02-.97a2.5 2.5 0 1 1 3.24 3.24c-.46.18-.89.53-.97 1.02Z"/></symbol>
+<symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+<symbol id="i-tree" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5H6.5a.5.5 0 0 0-.5.5v4.5M12 11.5h5.5a.5.5 0 0 1 .5.5v4.5"/></symbol>
+<symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3.5"/><path d="M12 3v18M3 12h18"/><path d="M12 3h5.5A3.5 3.5 0 0 1 21 6.5V12h-9ZM3 12h9v9H6.5A3.5 3.5 0 0 1 3 17.5Z" fill="currentColor" stroke="none" opacity=".9"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></symbol>
+<symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+<symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+<symbol id="i-cog" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
+<symbol id="i-swords" viewBox="0 0 24 24"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M14.5 6.5 18 3h3v3l-3.5 3.5M5 14l4 4M7 17l-3 3M3 19l2 2"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5Z"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9l-.8-1.2A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
+<symbol id="i-folder-in" viewBox="0 0 24 24"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9l-.8-1.2A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/><path d="M12 10v6m0 0-2.5-2.5M12 16l2.5-2.5"/></symbol>
+<symbol id="i-select" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
+<symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9Z"/></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="14" r="8"/><path d="m12 14 3-3M10 2h4"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.4 1-3 0 1.4 1 2.5 2.5 2.5Z"/></symbol>
+<symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.3L5.8 21 7 14.2l-5-4.9 6.9-1Z"/></symbol>
+<symbol id="i-flip" viewBox="0 0 24 24"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"/></symbol>
+<symbol id="i-eraser" viewBox="0 0 24 24"><path d="m7 21-4.3-4.3a2 2 0 0 1 0-2.8l9.6-9.6a2 2 0 0 1 2.8 0l5.6 5.6a2 2 0 0 1 0 2.8L13 21M22 21H7M5 11l9 9"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5"/></symbol>
+<symbol id="i-first" viewBox="0 0 24 24"><path d="M19 20 9 12l10-8ZM5 19V5"/></symbol>
+<symbol id="i-last" viewBox="0 0 24 24"><path d="m5 4 10 8-10 8ZM19 5v14"/></symbol>
+<symbol id="i-prev" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+<symbol id="i-next" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2ZM17 21v-8H7v8M7 3v5h8"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+<symbol id="i-clipboard" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></symbol>
+<symbol id="i-file-plus" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8ZM14 2v6h6M12 18v-6M9 15h6"/></symbol>
+<symbol id="i-file-text" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8ZM14 2v6h6M16 13H8M16 17H8M10 9H8"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+<symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+</defs></svg>
+
+<section class="view on" id="view-home">
+  <div class="home">
+    <div class="home-main">
+      <h1 class="brand">Bert ChessToolKit</h1>
+      <p class="tag">Uma interface de xadrez simples</p>
+      <div class="menu">
+        <button class="mbtn" id="goLib"><span class="ico"><svg class="i"><use href="#i-library"/></svg></span><span><b>Biblioteca</b><small id="homeLib">Seus livros e PGNs</small></span></button>
+        <button class="mbtn" id="goBoard"><span class="ico"><svg class="i"><use href="#i-board"/></svg></span><span><b>Novo Tabuleiro</b><small id="homeBoard">Análise, anotações e PGN</small></span></button>
+        <button class="mbtn" id="goPuz"><span class="ico"><svg class="i"><use href="#i-puzzle"/></svg></span><span><b>Puzzles</b><small id="homePuz">Treino, revisão e relâmpago</small></span></button>
+        <button class="mbtn" id="goRep"><span class="ico"><svg class="i"><use href="#i-tree"/></svg></span><span><b>Repertório</b><small id="homeRep">Treine suas aberturas com variantes</small></span></button>
+        <button class="mbtn" id="goDb"><span class="ico"><svg class="i"><use href="#i-db"/></svg></span><span><b>Databases</b><small id="homeDb">Importe e busque em PGNs enormes</small></span></button>
+        <button class="mbtn" id="goTrain"><span class="ico"><svg class="i"><use href="#i-swords"/></svg></span><span><b>Treinos</b><small>Finais contra o motor e coordenadas</small></span></button>
+      </div>
+      <div id="homeMsg"></div>
+    </div>
+    <div class="home-art"><div class="knight"><img src="pieces/cburnett/bN.svg" alt="Cavalo" draggable="false"></div></div>
+  </div>
+</section>
+
+<section class="view" id="view-train">
+  <div class="vtop"><button class="ghost back" data-back><svg class="i"><use href="#i-back"/></svg>Início</button></div>
+  <h1><svg class="i h"><use href="#i-swords"/></svg>Treinos</h1>
+  <div class="trgrid">
+    <div class="trcard">
+      <h2>Finais</h2>
+      <p class="muted">Jogue a posição contra o Stockfish na força máxima. Seu objetivo é vencer.</p>
+      <div id="trEnd"></div>
+    </div>
+    <div class="trcard">
+      <h2>Adivinhe o lance</h2>
+      <p class="muted">Uma partida de mestres sorteada das suas databases: veja a abertura e adivinhe os lances.</p>
+      <button id="goGuess">Abrir</button>
+    </div>
+    <div class="trcard" id="coCard">
+      <h2>Coordenadas</h2>
+      <p class="muted">Clique na casa pedida. 30 segundos.</p>
+      <div class="coctl"><select id="coSide"><option value="w">Vendo como brancas</option><option value="b">Vendo como pretas</option></select><label class="sw"><input type="checkbox" id="coHints"> Mostrar nomes</label><button class="ghost" id="coBig" title="Aumentar ou diminuir o tabuleiro">Ampliar</button><button id="coStart">Começar</button></div>
+      <div class="cotarget" id="coTarget">—</div>
+      <div id="coInfo" class="muted"></div>
+      <div class="coboard" id="coBoard"></div>
+      <div id="coMsg" class="muted"></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-guess">
+<header>
+  <div class="vtop"><button class="ghost back" data-back><svg class="i"><use href="#i-back"/></svg>Início</button><h1><svg class="i h"><use href="#i-bulb"/></svg>Adivinhe o lance</h1></div>
+  <div class="top">
+    <select id="gsDb" aria-label="Database"></select>
+    <select id="gsElo" aria-label="Elo mínimo"><option value="0">Qualquer Elo</option><option value="2200">Elo médio ≥ 2200</option><option value="2400" selected>Elo médio ≥ 2400</option><option value="2600">Elo médio ≥ 2600</option></select>
+    <select id="gsCol" aria-label="Seu lado"><option value="w">Jogo de brancas</option><option value="b">Jogo de pretas</option><option value="r">Lado aleatório</option></select>
+    <select id="gsSkip" aria-label="Abertura mostrada"><option value="0">Sem abertura mostrada</option><option value="8" selected>Mostrar 4 lances</option><option value="14">Mostrar 7 lances</option><option value="20">Mostrar 10 lances</option></select>
+    <button id="gsNew">Sortear partida</button>
+  </div>
+</header>
+<main class="pzmain fitmain" data-side="380">
+  <section class="boardcol" id="gsBoard"></section>
+  <aside class="panel">
+    <div class="stats" id="gsStats"></div>
+    <div id="gsMsg" class="gsmsg"></div>
+    <div class="btns">
+      <button class="ghost" id="gsHint"><svg class="i"><use href="#i-bulb"/></svg>Dica</button>
+      <button class="ghost" id="gsShow"><svg class="i"><use href="#i-eye"/></svg>Mostrar</button>
+      <button class="ghost" id="gsOpen">Abrir na Análise</button>
+    </div>
+    <p class="muted" style="font-size:12px;margin:0">1 ponto se acertar de primeira, ½ na segunda tentativa ou com dica. Os nomes dos jogadores só aparecem no fim.</p>
+  </aside>
+</main>
+</section>
+
+<section class="view" id="view-db">
+  <div class="vtop"><button class="ghost back" data-back><svg class="i"><use href="#i-back"/></svg>Início</button></div>
+  <h1><svg class="i h"><use href="#i-db"/></svg>Databases</h1>
+  <p class="muted">Importe um PGN grande (milhões de partidas): o app só cria um índice e continua lendo o arquivo original, que precisa ficar no mesmo lugar.</p>
+  <div class="dbtop"><button id="dbImport"><svg class="i"><use href="#i-plus"/></svg>Importar PGN…</button><button class="ghost" id="dbCancel" hidden>Cancelar importação</button></div>
+  <div class="dbprof"><div class="dbprofhead"><b>Perfis de jogadores</b><button class="ghost" id="pfNew">+ Novo perfil</button></div>
+    <p class="muted" style="font-size:13px;margin:4px 0 8px">Junte as contas de uma mesma pessoa (ex.: Lichess + Chess.com): estatísticas somadas e todas as partidas numa única database.</p>
+    <div id="pfList"></div></div>
+  <div class="dbonline"><b>Partidas de um jogador online</b>
+    <select id="dbSite"><option value="lichess">Lichess</option><option value="chesscom">Chess.com</option></select>
+    <input type="text" id="dbUser" placeholder="Usuário" spellcheck="false">
+    <input type="number" id="dbMax" placeholder="Máx. partidas (Lichess; vazio = todas)" min="1">
+    <button class="ghost" id="dbProfile" title="Ver ratings e estatísticas deste usuário">Ver perfil</button><button id="dbFetch">Baixar e importar</button></div>
+  <div id="dbProg" hidden><div class="pbar"><i id="dbBar"></i></div><small id="dbProgTx"></small></div>
+  <div id="dbList"></div>
+  <div id="dbBrowse" hidden>
+    <h2 id="dbName"></h2>
+    <div class="dbtools"><button class="ghost" id="dbMerge">Jogadores / mesclar</button><button class="ghost" id="dbReport" title="Estatísticas do jogador digitado no filtro abaixo">Relatório do jogador</button><button class="ghost" id="dbEmpty">Remover partidas vazias</button><button class="ghost" id="dbDups">Remover duplicadas</button></div>
+    <div class="dbshared">
+      <input type="text" id="dbPlayer" placeholder="Jogador (nome ou parte) — vale para as três buscas">
+      <select id="dbSide" title="Em que lado o jogador aparece"><option value="">Brancas ou pretas</option><option value="w">Só de brancas</option><option value="b">Só de pretas</option></select>
+    </div>
+    <div class="dbtabs" id="dbTabs"><button class="on" data-t="games">Partidas</button><button data-t="pos">Posição / padrão</button><button data-t="ev">Torneios</button></div>
+    <div class="dbpane" id="dbp-games">
+      <div class="dbfilter2">
+        <select id="dbRes"><option value="">Qualquer resultado</option><option value="1-0">1-0</option><option value="0-1">0-1</option><option value="1/2-1/2">½-½</option></select>
+        <input type="number" id="dbY1" placeholder="Ano de" min="1400" max="2100"><input type="number" id="dbY2" placeholder="até" min="1400" max="2100">
+        <button id="dbGo">Buscar</button>
+      </div>
+      <div id="dbRows"></div>
+      <button class="ghost" id="dbMore" hidden>Carregar mais</button>
+    </div>
+    <div class="dbpane" id="dbp-pos" hidden>
+      <p class="muted" style="font-size:13px;margin:4px 0 8px">Monte uma posição (ou só algumas peças) e o app procura em todas as partidas, em qualquer lance. Usa também o jogador e o lado escolhidos acima. Em bases enormes demora — dá para cancelar.</p>
+      <div class="dbfilter">
+        <button class="ghost" id="fdPick">Montar posição…</button>
+        <select id="fdMode"><option value="sub">Contém estas peças nas mesmas casas</option><option value="exact">Posição exata (todas as peças)</option></select>
+        <select id="fdMax"><option>50</option><option selected>100</option><option>300</option><option>1000</option></select>
+        <button id="fdGo">Procurar</button><button class="ghost" id="fdStop" hidden>Cancelar</button>
+      </div>
+      <div class="fdbox"><canvas id="fdPrev" width="160" height="160" hidden></canvas><div><small id="fdFen" class="muted">Nenhuma posição escolhida.</small><div id="fdProg" class="muted" style="font-size:13px"></div></div></div>
+      <div id="fdRows"></div>
+    </div>
+    <div class="dbpane" id="dbp-ev" hidden>
+      <p class="muted" style="font-size:13px;margin:4px 0 8px">Procure pelo nome do torneio ou da cidade (ex.: “Wijk aan Zee”, “Candidates”). O app lê o cabeçalho de cada partida no PGN original; em bases enormes demora, e dá para cancelar. Usa também o jogador e o lado escolhidos acima.</p>
+      <div class="dbfilter2">
+        <input type="text" id="evQ" placeholder="Torneio ou local" spellcheck="false">
+        <select id="evMax"><option>50</option><option selected>100</option><option>300</option><option>1000</option></select>
+        <button id="evGo">Procurar</button><button class="ghost" id="evStop" hidden>Cancelar</button>
+      </div>
+      <div id="evProg" class="muted" style="font-size:13px"></div>
+      <div id="evRows"></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-lib">
+  <div class="vtop"><button class="ghost back" data-back><svg class="i"><use href="#i-back"/></svg>Início</button></div>
+
+<h1><svg class="i h"><use href="#i-library"/></svg>Biblioteca</h1>
+<div class="sub" id="count"></div>
+<div class="bar">
+  <input type="search" id="q" placeholder="Buscar título…">
+  <button id="add">+ Adicionar</button>
+  <button class="ghost" id="folder"><svg class="i"><use href="#i-folder"/></svg>Pasta</button>
+  <button class="ghost" id="importDir"><svg class="i"><use href="#i-folder-in"/></svg>Importar pasta</button>
+  <button class="ghost" id="selToggle"><svg class="i"><use href="#i-select"/></svg>Selecionar</button>
+  <button class="ghost" id="cfgBtn"><svg class="i"><use href="#i-sliders"/></svg>Programas</button>
+</div>
+<div class="bar" id="selBar" style="display:none">
+  <span id="selN" style="align-self:center;color:var(--mu);font-size:14px"></span>
+  <input type="text" id="selCat" list="catList" placeholder="Categoria (ex.: Aberturas)">
+  <button id="selApply">Aplicar</button>
+  <select id="selSt" title="Mudar o status de leitura dos selecionados"><option value="">Status de leitura…</option><option value="none">Não lido</option><option value="reading">Lendo</option><option value="done">Concluído</option></select>
+  <button class="ghost" id="selAll">Selecionar todos visíveis</button>
+  <button class="danger" id="selDel">Excluir</button>
+  <button class="ghost" id="selCancel">Cancelar</button>
+</div>
+<datalist id="catList"></datalist>
+<div class="tabs" id="tabs"></div>
+<div class="tabs" id="cats"></div>
+<div class="grid" id="grid"></div>
+
+
+</section>
+
+<section class="view" id="view-rep">
+<header>
+  <div class="vtop"><button class="ghost back" data-back><svg class="i"><use href="#i-back"/></svg>Início</button><h1><svg class="i h"><use href="#i-tree"/></svg>Repertório</h1></div>
+  <div class="top">
+    <select id="rpSel" aria-label="Repertório"></select>
+    <select id="rpColor" aria-label="Seu lado"><option value="w">Jogo de brancas</option><option value="b">Jogo de pretas</option></select>
+    <button id="rpNew">+ Novo repertório</button>
+    <button class="ghost" id="rpImp">Importar PGN</button>
+    <input type="file" id="rpFile" accept=".pgn" hidden>
+    <button class="ghost" id="rpOpen">Editar / construir</button>
+    <button class="ghost" id="rpReset">Zerar progresso</button>
+    <button class="ghost" id="rpDel">Excluir repertório</button>
+  </div>
+</header>
+<main class="pzmain fitmain" data-side="380">
+  <section class="boardcol" id="rpBoard"></section>
+  <aside class="panel">
+    <div class="modes">
+      <button id="rpStudy" class="on">Estudar</button>
+      <button id="rpTrain">Treinar</button>
+      <button id="rpRev"><svg class="i"><use href="#i-repeat"/></svg>Revisão (0)</button>
+    </div>
+    <select id="rpChap" aria-label="Capítulo"></select>
+    <div class="stats" id="rpStats"></div>
+    <div id="rpInfo" class="rpinfo"></div>
+    <div id="rpFb"></div>
+    <div class="btns">
+      <button class="ghost" id="rpHint"><svg class="i"><use href="#i-bulb"/></svg>Dica</button>
+      <button class="ghost" id="rpSol"><svg class="i"><use href="#i-eye"/></svg>Solução</button>
+      <button class="ghost" id="rpAgain"><svg class="i"><use href="#i-undo"/></svg>Reiniciar</button>
+    </div>
+    <button id="rpNext">Continuar<svg class="i"><use href="#i-right"/></svg></button>
+    <p class="muted" style="font-size:12px;margin:0">Estudar: o app mostra o lance (seta). Treinar: você joga a linha de memória e ganha nota por posição. Revisão: só as posições vencidas. Atalho: Enter/Espaço = continuar.</p>
+  </aside>
+</main>
+</section>
+
+<section class="view" id="view-puz">
+<header>
+  <div class="vtop"><button class="ghost back" data-back><svg class="i"><use href="#i-back"/></svg>Início</button><h1><svg class="i h"><use href="#i-puzzle"/></svg>Puzzles</h1></div>
+  <div class="top">
+    <select id="setSel" aria-label="Conjunto de puzzles"></select>
+    <button id="imp">+ Importar PGN</button>
+    <button class="ghost" id="lpBtn" title="Baixar e filtrar os puzzles do Lichess">Puzzles do Lichess</button>
+    <input type="file" id="file" accept=".pgn" multiple hidden>
+    <label class="sw"><input type="checkbox" id="rnd"> Aleatório</label>
+    <button class="ghost" id="reset">Zerar progresso</button>
+    <button class="ghost" id="delSet">Excluir conjunto</button>
+  </div>
+</header>
+<main class="pzmain fitmain" data-side="380">
+  <section class="boardcol">
+    <div id="board"></div>
+    <div class="rz" title="Arraste para redimensionar (duplo clique: automático)"></div>
+    <div id="promo" hidden></div>
+  </section>
+  <aside class="panel">
+    <div class="modes" id="modes">
+      <button id="mTrain" class="on">Treino</button>
+      <button id="mRev"><svg class="i"><use href="#i-repeat"/></svg>Revisão (0)</button>
+      <button id="mBlitz"><svg class="i"><use href="#i-zap"/></svg>Relâmpago</button>
+      <select id="bzDur" aria-label="Duração do relâmpago"><option value="1">1 min</option><option value="3" selected>3 min</option><option value="5">5 min</option></select>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div id="info"></div>
+    <div id="fb"></div>
+    <div class="btns">
+      <button class="ghost" id="hint"><svg class="i"><use href="#i-bulb"/></svg>Dica</button>
+      <button class="ghost" id="sol"><svg class="i"><use href="#i-eye"/></svg>Solução</button>
+      <button class="ghost" id="again"><svg class="i"><use href="#i-undo"/></svg>Reiniciar</button>
+    </div>
+    <div class="btns">
+      <button class="ghost" id="prev"><svg class="i"><use href="#i-left"/></svg>Anterior</button>
+      <button id="next">Próximo<svg class="i"><use href="#i-right"/></svg></button>
+    </div>
+    <div id="expl"></div>
+    <div id="list"></div>
+  </aside>
+</main>
+
+</section>
+
+<div id="look" hidden>
+  <b class="lktitle">Configurações</b>
+  <label>Idioma <select id="lang" translate="no"><option value="pt">Português</option><option value="en">English</option></select></label>
+  <label>Tema do app <select id="aTheme"><option value="auto">Automático (segue o sistema)</option><option value="light">Claro</option><option value="brown">Escuro marrom</option><option value="black">Preto</option><option value="blue">Azul noturno</option></select></label>
+  <label>Tamanho do tabuleiro <small id="szVal"></small><input type="range" id="bSize" min="320" max="1400" step="10"></label>
+  <label class="sw"><input type="checkbox" id="bAuto"> Ajustar automaticamente à janela</label>
+  <label>Peças <select id="pSet"></select></label>
+  <div id="pPrev"></div>
+  <small id="pCredit" hidden style="color:var(--mu)">Capivara: ícone “Capybara” de Rafaela QB, via The Noun Project (thenounproject.com/icon/capybara-470903).</small>
+  <div id="customRow" hidden>
+    <button class="ghost" id="pCustom" style="width:100%">Escolher as 12 imagens…</button>
+    <input type="file" id="pFiles" accept="image/*" multiple hidden>
+    <small id="pMsg" style="color:var(--mu)">Nomes: wK wQ wR wB wN wP (brancas) e bK bQ bR bB bN bP (pretas).</small>
+  </div>
+  <label>Tabuleiro <select id="bTheme"></select></label>
+  <div class="row2" id="bCustom" hidden>
+    <label>Casas claras <input type="color" id="cLight"></label>
+    <label>Casas escuras <input type="color" id="cDark"></label>
+  </div>
+  <label class="sw"><input type="checkbox" id="coords"> Mostrar coordenadas</label>
+  <label class="sw"><input type="checkbox" id="anim"> Animar o movimento das peças</label>
+  <label class="sw"><input type="checkbox" id="snd"> Sons dos lances</label>
+  <button class="ghost" id="lichTok" title="Necessário para o explorador online do Lichess">Token do Lichess…</button>
+  <button class="ghost" id="sndDir" title="Abre a pasta com os sons (move, capture, castle, check, end, ok, bad). Troque por .wav/.ogg de sua preferência.">Pasta dos sons…</button>
+</div>
+
+<section class="view" id="view-ana">
+  <div class="vtop">
+    <button class="ghost back" data-back><svg class="i"><use href="#i-back"/></svg>Início</button>
+    <h1><svg class="i h"><use href="#i-board"/></svg>Análise</h1>
+    <span id="abFile" class="abfile"></span>
+  </div>
+  <div class="atabs" id="abTabsBar"></div>
+  <main class="anamain fitmain" data-side="540" data-below="300">
+    <section class="abcol">
+      <div class="plr" id="abTop"></div>
+      <div class="abrow"><div class="boardcol" id="abBoard"></div><div class="evbar" id="abEval" title="Avaliação da posição (do ponto de vista das brancas)"><div class="ew"></div><span class="evl"></span></div></div>
+      <div class="plr" id="abBot"></div>
+      <div class="abtools">
+        <button class="ghost tb" id="abFirst" title="Início (↑)"><svg class="i"><use href="#i-first"/></svg></button>
+        <button class="ghost tb" id="abPrev" title="Lance anterior (←)"><svg class="i"><use href="#i-prev"/></svg></button>
+        <button class="ghost tb" id="abNext" title="Próximo lance (→)"><svg class="i"><use href="#i-next"/></svg></button>
+        <button class="ghost tb" id="abLast" title="Fim da linha (↓)"><svg class="i"><use href="#i-last"/></svg></button>
+        <span class="sep"></span>
+        <button class="ghost tb" id="abPlay" title="Jogar contra o motor"><svg class="i"><use href="#i-swords"/></svg></button>
+        <button class="ghost tb" id="abFlip" title="Virar tabuleiro (F)"><svg class="i"><use href="#i-flip"/></svg></button>
+        <button class="ghost tb" id="abClear" title="Limpar setas e círculos"><svg class="i"><use href="#i-eraser"/></svg></button>
+        <span class="colors" title="Cor das setas. Botão direito: arrastar = seta, clicar = círculo. Shift = vermelha, Ctrl = azul, Alt = amarela.">
+          <button data-sc="G" class="cdot g"></button><button data-sc="R" class="cdot r"></button><button data-sc="B" class="cdot b"></button><button data-sc="Y" class="cdot y"></button>
+        </span>
+        <span class="sep"></span>
+        <button class="ghost tb" id="abUndo" title="Desfazer (Ctrl+Z)"><svg class="i"><use href="#i-undo"/></svg></button>
+        <button class="ghost tb" id="abRedo" title="Refazer (Ctrl+Shift+Z)"><svg class="i"><use href="#i-redo"/></svg></button>
+      </div>
+      <div class="plbar" id="abPlayBar" hidden>
+        <div id="plStat" class="plstat"></div>
+        <div id="plWarn" class="plwarn" hidden></div>
+        <button class="ghost" id="plTb" title="Consulta a tablebase do Lichess (até 7 peças, precisa de internet): resultado teórico e melhor lance">Tablebase</button>
+        <button class="ghost" id="plBack" title="Desfazer o seu último lance e o do motor"><svg class="i"><use href="#i-undo"/></svg>Voltar lance</button>
+        <button class="ghost" id="plRes">Desistir</button>
+        <button class="ghost" id="plStop">Encerrar</button>
+      </div>
+      <div class="abgraph" id="abGraph">
+        <div class="gh"><b>Análise</b><span id="abGraphInfo" class="gi"></span><button class="ghost" id="abAnnot" hidden title="Gravar as avaliações e as marcas ?! ? ?? no PGN"><svg class="i"><use href="#i-pencil"/></svg>Anotar</button><button class="ghost" id="abAnalyze"><svg class="i"><use href="#i-play"/></svg>Analisar partida</button></div>
+        <div class="gbox" id="abGraphBox"><svg id="abGraphSvg" viewBox="0 0 600 100"></svg></div>
+        <div class="gsum" id="abSummary"></div>
+      </div>
+    </section>
+    <div class="abright">
+    <div class="abeng" id="abEng">
+      <div class="eh">
+        <label class="swt" title="Ligar / desligar a engine"><input type="checkbox" id="abEngSw"><i></i></label>
+        <b id="abEngEval" class="evbig">–</b>
+        <span class="einfo"><span id="abEngName">Stockfish</span><small id="abEngDepth"></small></span>
+        <button class="ghost tb" id="abEngCfg" title="Configurar a engine"><svg class="i"><use href="#i-cog"/></svg></button>
+      </div>
+      <div class="elines" id="abEngLines"></div>
+      <div class="abcloud">
+        <div class="ch"><label class="swt" title="Consultar a nuvem do Lichess (precisa de internet)"><input type="checkbox" id="abCloudSw"><i></i></label><span>Nuvem do Lichess</span><small id="abCloudInfo"></small></div>
+        <div class="cl" id="abCloudLines"></div>
+      </div>
+    </div>
+    <aside class="abpanel">
+      <div class="abopen" id="abOpening"></div>
+      <div class="abtabs" id="abTabs">
+        <button data-t="moves" class="on"><svg class="i"><use href="#i-list"/></svg>Lances</button>
+        <button data-t="games"><svg class="i"><use href="#i-file-text"/></svg>Partidas</button>
+        <button data-t="db"><svg class="i"><use href="#i-db"/></svg>Database</button>
+        <button data-t="info"><svg class="i"><use href="#i-info"/></svg>Info</button>
+      </div>
+      <div class="abpane on" id="pane-moves">
+        <div id="abMoves" class="abmoves"></div>
+        <div class="abnote">
+          <div class="nagrow" id="abNags"></div>
+          <div class="abvar">
+            <button class="ghost" id="abPromote" title="Subir esta variação"><svg class="i"><use href="#i-up"/></svg>Promover</button>
+            <button class="ghost" id="abMain" title="Tornar esta a linha principal"><svg class="i"><use href="#i-star"/></svg>Linha principal</button>
+            <button class="ghost" id="abDelete" title="Excluir deste lance em diante (Del)"><svg class="i"><use href="#i-trash"/></svg>Excluir</button>
+          </div>
+          <textarea id="abComment" rows="3" placeholder="Comentário neste lance…" spellcheck="false"></textarea>
+        </div>
+      </div>
+      <div class="abpane" id="pane-games">
+        <div class="gl-top">
+          <input type="search" id="gSearch" placeholder="Buscar jogador ou evento…">
+          <button class="ghost" id="abOpenDisk" title="Abrir um PGN do disco"><svg class="i"><use href="#i-upload"/></svg>Abrir PGN…</button>
+          <input type="file" id="abFile2" accept=".pgn,text/plain" hidden>
+        </div>
+        <div id="gList" class="gl"></div>
+        <div class="gl-foot"><small id="gCount"></small><button class="ghost" id="gDel"><svg class="i"><use href="#i-trash"/></svg>Excluir partida</button></div>
+      </div>
+      <div class="abpane" id="pane-db">
+        <div class="exhead"><select id="exDb" title="Database usada no explorador"></select><button class="ghost" id="exManage">Gerenciar</button></div>
+        <div class="exfilter" id="exOnline" style="display:none">
+          <select id="exSpeed" title="Ritmo das partidas"><option value="">Todos os ritmos</option><option value="fast">Bullet e blitz</option><option value="slow">Rápidas e clássicas</option><option value="classical">Só clássicas</option></select>
+          <select id="exRate" title="Rating dos jogadores"><option value="">Todos os ratings</option><option value="hi">2000+</option><option value="mid">1600–1999</option><option value="lo">Até 1599</option></select>
+          <button class="ghost" id="exToken" title="Token pessoal do Lichess">Token</button>
+        </div>
+        <div class="exfilter" id="exFilter">
+          <input type="text" id="exPlayer" list="exPlayers" placeholder="Filtrar por jogador (opcional)" spellcheck="false" autocomplete="off" title="Mostra só as partidas deste jogador. Aceita parte do nome.">
+          <datalist id="exPlayers"></datalist>
+          <div class="exside" id="exSide" title="Cor em que o jogador jogou"><button data-s="" class="on">Ambos</button><button data-s="w">Brancas</button><button data-s="b">Pretas</button></div>
+          <button class="ghost" id="exClear" title="Limpar o jogador">×</button>
+        </div>
+        <div id="exBody" class="exbody"></div>
+      </div>
+      <div class="abpane" id="pane-info"><div id="abInfo" class="abinfo"></div></div>
+      <div class="abfoot">
+        <button id="abSave"><svg class="i"><use href="#i-save"/></svg>Salvar</button>
+        <button class="ghost" id="abNew" title="Nova partida"><svg class="i"><use href="#i-file-plus"/></svg>Nova</button>
+        <button class="ghost" id="abImport" title="Importar um PGN do seu computador"><svg class="i"><use href="#i-upload"/></svg>Importar</button>
+        <input type="file" id="abFile3" accept=".pgn" hidden>
+        <button class="ghost" id="abPaste" title="Colar PGN"><svg class="i"><use href="#i-clipboard"/></svg>Colar PGN</button>
+        <button class="ghost" id="abEditPgn" title="Editar o texto PGN"><svg class="i"><use href="#i-pencil"/></svg>Editar PGN</button>
+        <button class="ghost" id="abCopyPgn" title="Copiar PGN"><svg class="i"><use href="#i-copy"/></svg>PGN</button>
+        <button class="ghost" id="abTrain" title="Treinar este PGN como repertório"><svg class="i"><use href="#i-tree"/></svg>Treinar</button>
+        <button class="ghost" id="abCopyFen" title="Copiar FEN"><svg class="i"><use href="#i-copy"/></svg>FEN</button>
+        <button class="ghost" id="abFenSet" title="Editor de posição: monte qualquer posição ou cole um FEN"><svg class="i"><use href="#i-grid"/></svg>Editor de posição</button>
+        <button class="ghost" id="abExport" title="Exportar para um arquivo"><svg class="i"><use href="#i-download"/></svg>Exportar</button>
+      </div>
+    </aside>
+    </div>
+  </main>
+</section>
+
+
+
+<dialog id="lpDlg" class="lpdlg">
+  <b>Puzzles do Lichess</b>
+  <div class="lpst" id="lpSt"></div>
+  <div class="row" style="margin:8px 0"><button class="ghost" id="lpDl">Baixar o banco</button></div>
+  <label>Temas <small id="lpPicked"></small></label>
+  <div class="lpfind"><input type="search" id="lpFind" placeholder="Buscar tema… (garfo, mate, final)"><select id="lpAll"><option value="any">Qualquer um dos temas</option><option value="all">Todos os temas</option></select><button class="ghost" id="lpClear">Limpar</button></div>
+  <div class="lpthemes" id="lpThemes"></div>
+  <div class="lpgrid">
+    <label>Rating de<input type="number" id="lpMin" value="1000" min="0" max="4000" step="50"></label>
+    <label>até<input type="number" id="lpMax" value="1800" min="0" max="4000" step="50"></label>
+    <label>Quantidade<select id="lpN"><option>50</option><option>100</option><option selected>250</option><option>500</option><option>1000</option><option>2000</option></select></label>
+    <label>Abertura (opcional)<input type="text" id="lpOpen" placeholder="ex.: Sicilian" spellcheck="false"></label>
+  </div>
+  <label class="sw"><input type="checkbox" id="lpRnd" checked> Sortear (senão pega os primeiros que combinam)</label>
+  <label class="sw"><input type="checkbox" id="lpSort" checked> Ordenar do mais fácil ao mais difícil</label>
+  <label class="sw"><input type="checkbox" id="lpPop" checked> Só puzzles bem avaliados pela comunidade</label>
+  <div class="engmsg" id="lpMsg"></div>
+  <div class="row"><button id="lpGo">Criar conjunto</button><button class="ghost" id="lpClose">Fechar</button></div>
+</dialog>
+<div id="mvMenu" class="ctx" hidden></div>
+<dialog id="playDlg" class="pldlg">
+  <b>Jogar contra o motor</b>
+  <div class="plrow"><label>Força (Elo)</label><div class="plslide"><input type="range" id="plElo" min="1320" max="3190" step="10"><output id="plEloV"></output></div></div>
+  <div class="plrow"><label>Tempo por lance</label><select id="plMs"><option value="300">0,3 s</option><option value="1000">1 s</option><option value="3000">3 s</option><option value="8000">8 s</option></select></div>
+  <div class="plrow"><label>Suas peças</label><select id="plCol"><option value="w">Brancas</option><option value="b">Pretas</option><option value="r">Aleatório</option></select></div>
+  <div class="plrow"><label>Tutor</label><label class="sw" style="margin:0"><input type="checkbox" id="plTutor"> Avisar quando eu errar (o motor espera)</label></div>
+  <div class="plrow"><label>Começar de</label><select id="plFrom"><option value="cur">Posição atual do tabuleiro</option><option value="new">Partida nova</option></select></div>
+  <p class="muted" id="plNote" style="font-size:12px;margin:8px 0 0"></p>
+  <p class="muted" style="font-size:12px;margin:8px 0 0">Durante a partida a análise fica pausada. Os lances são gravados na Análise (dá para salvar o PGN e analisar depois).</p>
+  <div class="row"><button id="plGo">Começar</button><button class="ghost" id="plNo">Cancelar</button></div>
+</dialog>
+<dialog id="dlg">
+  <b>Editar item</b>
+  <label>Título</label><input type="text" id="eTitle">
+  <label>Autor (opcional)</label><input type="text" id="eAuthor">
+  <label>Categoria</label><input type="text" id="eCat" list="catList" placeholder="Ex.: Aberturas, Finais, Tática">
+  <label>Status de leitura</label><select id="eSt"><option value="">Não lido</option><option value="reading">Lendo</option><option value="done">Concluído</option></select>
+  <label>Nota (opcional)</label><input type="text" id="eNote" placeholder="Ex.: parei no capítulo 5" maxlength="120">
+  <label>Capa (imagem)</label>
+  <div class="row" style="margin-top:0;align-items:center">
+    <div class="prev" id="ePrev"></div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="ghost" id="pick">Escolher imagem</button>
+      <button class="ghost" id="fromBook">Usar imagem do livro</button>
+      <button class="ghost" id="clr">Remover capa</button>
+    </div>
+    <input type="file" id="cov" accept="image/*" hidden>
+  </div>
+  <div class="row">
+    <button id="save">Salvar</button>
+    <button class="ghost" id="cancel">Cancelar</button>
+    <button class="danger" id="libDel" style="margin-left:auto">Excluir</button>
+  </div>
+</dialog>
+
+
+<dialog id="cfgDlg">
+  <b>Programa para abrir cada tipo</b>
+  <div id="cfgRows"></div>
+  <div class="row"><button class="ghost" id="cfgClose">Fechar</button></div>
+</dialog>
+
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
