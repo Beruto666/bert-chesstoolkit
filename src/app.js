@@ -71,3 +71,10 @@ Promise.all([libReady, puzReady, rp.ready]).then(refreshHome);
 // sem seleção de texto nem arrastar imagens fora dos campos de texto
 document.addEventListener("selectstart", (e) => { const t = e.target.nodeType === 1 ? e.target : e.target.parentElement; if (!t?.closest("input,textarea,[contenteditable],.sel")) e.preventDefault(); });
 document.addEventListener("dragstart", (e) => { if (!e.target.closest?.("input,textarea")) e.preventDefault(); });
+
+// F11: tela cheia (no Windows esconde também a barra de tarefas); F11 de novo volta
+document.addEventListener("keydown", async (e) => {
+  if (e.key !== "F11") return;
+  e.preventDefault();
+  try { const w = window.__TAURI__.window.getCurrentWindow(); await w.setFullscreen(!(await w.isFullscreen())); } catch (_) {}
+});
