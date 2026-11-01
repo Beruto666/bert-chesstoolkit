@@ -1,0 +1,7 @@
+{
+  "name": "bert-chesstoolkit",
+  "version": "1.24.1",
+  "private": true,
+  "scripts": { "tauri": "tauri" },
+  "devDependencies": { "@tauri-apps/cli": "^2" }
+}
