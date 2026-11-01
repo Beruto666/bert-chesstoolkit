@@ -60,3 +60,6 @@ Português (padrão) e inglês, em *Configurações → Idioma*. As traduções 
 Código do app: [MIT](LICENSE). Regras de xadrez: [chess.js](https://github.com/jhlywa/chess.js) (BSD-2-Clause). Os conjuntos de peças mantêm as próprias licenças, alguns **não comerciais** (CC BY-NC-SA) ou GPL; veja [src/pieces/CREDITS.md](src/pieces/CREDITS.md). Nomes de aberturas: [lichess-org/chess-openings](https://github.com/lichess-org/chess-openings) (CC0); puzzles: banco do Lichess (CC0). O Stockfish é baixado à parte (GPLv3). Os sons dos lances vêm do repositório do [Lichess](https://github.com/lichess-org/lila) (`public/sound`); confira a licença antes de redistribuir. O set de peças "Capivara" é o Cburnett com um cavalo baseado no [ícone Capybara de Rafaela QB](https://thenounproject.com/icon/capybara-470903/), do The Noun Project (crédito obrigatório).
 
 Sem vínculo com o Lichess, o Chess.com ou o Stockfish.
+
+## Créditos
+Ideias, design e direção de [Beruto666](https://github.com/Beruto666). Feito com a ajuda do [Claude](https://claude.ai) (Anthropic).

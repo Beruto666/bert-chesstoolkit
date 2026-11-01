@@ -74,3 +74,6 @@ Linux (main platform, AppImage) and Windows 10/11 (newer, less tested). macOS is
 App code: [MIT](LICENSE). Rules of chess: [chess.js](https://github.com/jhlywa/chess.js) (BSD-2-Clause). The bundled piece sets keep their own licenses, some of them **non-commercial** (CC BY-NC-SA) or GPL — see [src/pieces/CREDITS.md](src/pieces/CREDITS.md). Opening names come from [lichess-org/chess-openings](https://github.com/lichess-org/chess-openings) (CC0); puzzles from the Lichess database (CC0). Stockfish is downloaded separately (GPLv3). Move sounds come from the [Lichess](https://github.com/lichess-org/lila) repository (`public/sound`) — check their license before redistributing. The "Capybara" piece set is Cburnett with a knight based on the [Capybara icon by Rafaela QB](https://thenounproject.com/icon/capybara-470903/) from The Noun Project (credit required).
 
 Not affiliated with Lichess, Chess.com or Stockfish.
+
+## Credits
+Ideas, design and direction by [Beruto666](https://github.com/Beruto666). Built with the help of [Claude](https://claude.ai) (Anthropic).
